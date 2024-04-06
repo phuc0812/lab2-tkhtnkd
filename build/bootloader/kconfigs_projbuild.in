@@ -1,0 +1,3 @@
+source "C:/Users/DELL/esp/v4.3.7/esp-idf/components/bootloader/Kconfig.projbuild"
+source "C:/Users/DELL/esp/v4.3.7/esp-idf/components/esptool_py/Kconfig.projbuild"
+source "C:/Users/DELL/esp/v4.3.7/esp-idf/components/partition_table/Kconfig.projbuild"
