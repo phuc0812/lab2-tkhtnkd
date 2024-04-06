@@ -160,22 +160,20 @@ void task_ssd1306_display_image(uint8_t *logo){
 	i2c_cmd_handle_t cmd = i2c_cmd_link_create();
 	for(int i = 0; i < 8; i++){
 		
-		int point = 128*i;
-		uint8_t image[128];
-		int count = 0;
-		for (int j = point; j < point+128; j++) {
-			image[count] = logo[j];
-			count++;
+		uint8_t segs[128];
+		for (int j = 0; j < 128; j++) {
+			segs[j] = logo[j*8 + i];
 		}
 
 		cmd = i2c_cmd_link_create();
 		i2c_master_start(cmd);
 		i2c_master_write_byte(cmd, (OLED_I2C_ADDRESS << 1) | I2C_MASTER_WRITE, true);
 		i2c_master_write_byte(cmd, OLED_CONTROL_BYTE_CMD_SINGLE, true);
-		i2c_master_write_byte(cmd, 0xB0 | (uint8_t)i, true);
+		
+		i2c_master_write_byte(cmd, 0xB0 | (uint8_t) i, true);
 
 		i2c_master_write_byte(cmd, OLED_CONTROL_BYTE_DATA_STREAM, true);
-		i2c_master_write(cmd, image, 128, true);
+		i2c_master_write(cmd, segs, 128, true);
 		
 		i2c_master_stop(cmd);
 		i2c_master_cmd_begin(I2C_NUM_0, cmd, 10/portTICK_PERIOD_MS);
@@ -262,10 +260,10 @@ void app_main(void)
 	xTaskCreate(&task_ssd1306_display_clear, "ssd1306_display_clear",  2048, NULL, 6, NULL);
 	vTaskDelay(100/portTICK_PERIOD_MS);
 	
-	xTaskCreate(&task_ssd1306_display_text, "ssd1306_display_text",  2048, (void *)"19522031\n19522509", 6, NULL);
+	// xTaskCreate(&task_ssd1306_display_text, "ssd1306_display_text",  2048, (void *)"19522031\n19522509", 6, NULL);
 	// vTaskDelay(5000/portTICK_PERIOD_MS);
 	// xTaskCreate(&task_ssd1306_display_clear, "ssd1306_display_clear",  2048, NULL, 6, NULL);
 	
-	// xTaskCreate(&task_ssd1306_display_image, "ssd1306_display_image",  2048, logo, 6, NULL);
+	xTaskCreate(&task_ssd1306_display_image, "ssd1306_display_image",  2048, logo, 6, NULL);
 
 }
